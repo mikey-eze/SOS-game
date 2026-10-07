@@ -3,9 +3,10 @@ import {createRoot} from "react-dom/client";
 import {io} from "socket.io-client";
 import "./style.css";
 
-const socket=io(import.meta.env.VITE_SERVER_URL||"http://localhost:3001");
+const serverUrl=import.meta.env.VITE_SERVER_URL || (import.meta.env.DEV ? "http://localhost:3001" : "");
+const socket=io(serverUrl,{autoConnect:!!serverUrl});
 
-function App(){
+function App(){ 
  const[screen,setScreen]=useState("home"),[name,setName]=useState(""),[roomCode,setRoomCode]=useState(""),[room,setRoom]=useState(null),[letter,setLetter]=useState("S"),[err,setErr]=useState("");
  const me=room?.players.find(p=>p.id===socket.id),current=room?.players[room.turnIndex],myTurn=current?.id===socket.id;
  useEffect(()=>{
@@ -13,6 +14,7 @@ function App(){
    const onState=r=>{setRoom(r);setScreen(r.started?"game":"lobby")};
    const onErr=m=>{setErr(m);setTimeout(()=>setErr(""),2200)};
    socket.on("roomCreated",onCreated);socket.on("state",onState);socket.on("errorMessage",onErr);
+   if(!serverUrl)setErr("Multiplayer server is not configured.");
    return()=>{socket.off("roomCreated",onCreated);socket.off("state",onState);socket.off("errorMessage",onErr)};
  },[]);
  const create=()=>name.trim()&&socket.emit("createRoom",{name});
