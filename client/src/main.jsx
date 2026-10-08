@@ -133,7 +133,7 @@ function App(){
     <div className="gameWrap">
       <aside><div className="rules"><b>HOW TO PLAY</b><br/>Make SOS horizontally, vertically or diagonally.<br/>SOS = +1 point and you play again.<br/>No SOS = turn switches.</div></aside>
       <section className="play">
-        <div className="board" style={{gridTemplateColumns:"repeat("+n+",1fr)"}}>
+        <div className="board" style={{gridTemplateColumns:"repeat("+n+",1fr)",gridTemplateRows:"repeat("+n+",1fr)"}}>
           {board.map((row,r)=>row.map((v,c)=><button key={r+"-"+c} className={"cell "+(v||"")+" p"+(owners[r][c]!==null?owners[r][c]+1:"")+(flash.includes(r+","+c)?" hit":"")} disabled={!!v||roundOver} onClick={()=>move(r,c)}>{v}</button>))}
           {lines.length>0&&<svg className="sosOverlay" viewBox={"0 0 "+n+" "+n} preserveAspectRatio="none" aria-hidden="true">
             {lines.map(({cells,player,delay},i)=>{
