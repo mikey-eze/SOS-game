@@ -92,7 +92,7 @@ button{border:0}
 
 @keyframes turnFade{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-1px)}}
 @keyframes turnReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
-@keyframes lineDraw{from{opacity:0;transform:rotate(var(--angle,0deg)) scaleX(0)}to{opacity:.75;transform:rotate(var(--angle,0deg)) scaleX(1)}}
+@keyframes lineDraw{from{opacity:0}to{opacity:.75}}
 
 @media(max-width:700px){
   .brand{padding:16px 16px 0}
