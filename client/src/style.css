@@ -98,10 +98,10 @@ button{border:0}
 }
 .sosLine{
   fill:none;
-  stroke-width:1.35;
+  stroke-width:3px;
   stroke-linecap:round;
-  stroke-dasharray:100;
-  stroke-dashoffset:100;
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
   animation:lineDraw .75s cubic-bezier(.16,1,.3,1) var(--delay) forwards,
             linePulse 1.15s ease calc(var(--delay) + .75s) both;
 }
@@ -126,7 +126,7 @@ button{border:0}
 @keyframes turnFade{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-1px)}}
 @keyframes turnReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes cellMatch{0%{transform:scale(.92);box-shadow:inset 0 0 0 0 var(--game)}35%{transform:scale(1.08);box-shadow:inset 0 0 0 2px var(--game)}100%{transform:scale(1);box-shadow:inset 0 0 0 0 transparent}}
-@keyframes lineDraw{from{stroke-dashoffset:100;opacity:.2}to{stroke-dashoffset:0;opacity:.98}}
+@keyframes lineDraw{from{stroke-dashoffset:1;opacity:.2}to{stroke-dashoffset:0;opacity:.98}}
 @keyframes linePulse{0%,100%{opacity:.92;filter:brightness(1)}35%{opacity:1;filter:brightness(1.25)}65%{opacity:.95;filter:brightness(1)}}
 
 @media(prefers-reduced-motion:reduce){
