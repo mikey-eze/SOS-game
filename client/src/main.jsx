@@ -3,8 +3,8 @@ import {createRoot} from "react-dom/client";
 import {io} from "socket.io-client";
 import "./style.css";
 
-const serverUrl=import.meta.env.VITE_SERVER_URL || (import.meta.env.DEV ? "http://localhost:3001" : "");
-const socket=io(serverUrl,{autoConnect:!!serverUrl});
+const serverUrl=import.meta.env.VITE_SERVER_URL || "https://sos-online-server.onrender.com";
+const socket=io(serverUrl,{autoConnect:true,transports:["websocket","polling"]});
 
 function App(){ 
  const[screen,setScreen]=useState("home"),[name,setName]=useState(""),[roomCode,setRoomCode]=useState(""),[room,setRoom]=useState(null),[letter,setLetter]=useState("S"),[err,setErr]=useState("");
@@ -13,15 +13,15 @@ function App(){
    const onCreated=c=>{setRoomCode(c);setScreen("lobby")};
    const onState=r=>{setRoom(r);setScreen(r.started?"game":"lobby")};
    const onErr=m=>{setErr(m);setTimeout(()=>setErr(""),2200)};
-   socket.on("roomCreated",onCreated);socket.on("state",onState);socket.on("errorMessage",onErr);
-   if(!serverUrl)setErr("Multiplayer server is not configured.");
-   return()=>{socket.off("roomCreated",onCreated);socket.off("state",onState);socket.off("errorMessage",onErr)};
+   const onConnectError=()=>setErr("Multiplayer server is offline. Start the Render server and try again.");
+   socket.on("roomCreated",onCreated);socket.on("state",onState);socket.on("errorMessage",onErr);socket.on("connect_error",onConnectError);
+   return()=>{socket.off("roomCreated",onCreated);socket.off("state",onState);socket.off("errorMessage",onErr);socket.off("connect_error",onConnectError)};
  },[]);
- const create=()=>name.trim()&&socket.emit("createRoom",{name});
- const join=()=>name.trim()&&roomCode.trim()&&socket.emit("joinRoom",{name,code:roomCode});
+ const create=()=>name.trim()?socket.emit("createRoom",{name}):setErr("Enter your name first.");
+ const join=()=>name.trim()&&roomCode.trim()?socket.emit("joinRoom",{name,code:roomCode}):setErr("Enter your name and room code.");
  const leave=()=>{socket.emit("leaveRoom");setRoom(null);setScreen("home")};
 
- if(screen==="home")return <main className="screen home"><div className="brand">SOS<span>16</span><small>ONLINE ARENA</small></div><div className="hero"><p className="tag">REAL-TIME MULTIPLAYER</p><h1>Make your <i>SOS.</i><br/>Own the board.</h1><p className="sub">16×16. Friends. One board.</p><input placeholder="YOUR NAME" value={name} onChange={e=>setName(e.target.value)}/><div className="buttons"><button onClick={create}>CREATE ROOM</button><button className="ghost" onClick={()=>setScreen("join")}>JOIN ROOM</button></div></div></main>;
+ if(screen==="home")return <main className="screen home"><div className="brand">SOS<span>16</span><small>ONLINE ARENA</small></div><div className="hero"><p className="tag">REAL-TIME MULTIPLAYER</p><h1>Make your <i>SOS.</i><br/>Own the board.</h1><p className="sub">16×16. Friends. One board.</p><input placeholder="YOUR NAME" value={name} onChange={e=>setName(e.target.value)}/><div className="buttons"><button onClick={create}>CREATE ROOM</button><button className="ghost" onClick={()=>setScreen("join")}>JOIN ROOM</button></div>{err&&<div className="error">{err}</div>}</div></main>;
 
  if(screen==="join")return <main className="screen join"><button className="link" onClick={()=>setScreen("home")}>← Back</button><h1>Join a room</h1><input placeholder="YOUR NAME" value={name} onChange={e=>setName(e.target.value)}/><input placeholder="ROOM CODE" value={roomCode} onChange={e=>setRoomCode(e.target.value.toUpperCase())}/><button onClick={join}>JOIN ROOM</button>{err&&<div className="error">{err}</div>}</main>;
 
