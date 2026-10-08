@@ -144,10 +144,8 @@ function App(){
               const er=dr/step,ec=dc/step;
               const x1=(start[1]+0.5-ec*extend)*100/n;
               const x2=(end[1]+0.5+ec*extend)*100/n;
-              const horizontal=dr===0;
-              const yOffset=horizontal?0.08:0;
-              const y1=(start[0]+0.5-er*extend+yOffset)*100/n;
-              const y2=(end[0]+0.5+er*extend+yOffset)*100/n;
+              const y1=(start[0]+0.5-er*extend)*100/n;
+              const y2=(end[0]+0.5+er*extend)*100/n;
               return <line
                 key={i}
                 className={"sosLine p"+(player+1)}
