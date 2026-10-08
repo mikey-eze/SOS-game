@@ -74,7 +74,7 @@ export class Room {
     const room=this.room;
     if(!room) return;
 
-    if(msg.type==="start") {
+    if(msg.type==="leave") {\n      const idx=room.players.findIndex(p=>p.id===id);\n      if(idx>=0) room.players.splice(idx,1);\n      if(room.hostId===id) room.hostId=room.players[0]?.id||null;\n      if(room.turnIndex>=room.players.length) room.turnIndex=0;\n      this.sockets.delete(id);\n      this.broadcast();\n      return;\n    }\n\n    if(msg.type==="start") {
       if(room.hostId!==id) return;
       if(room.players.length<2) return this.send(id,{type:"error",message:"Need at least 2 players."});
       room.started=true;
