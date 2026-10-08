@@ -83,4 +83,5 @@ io.on("connection",socket=>{
   socket.on("disconnect",()=>{const room=rooms.get(socket.data.roomCode);if(room){const p=room.players.find(x=>x.id===socket.id);if(p)p.connected=false;broadcast(room)}});
 });
 app.get("/health",(_,res)=>res.json({ok:true,rooms:rooms.size}));
-const PORT=process.env.PORT||3001;\nhttpServer.listen(PORT,"0.0.0.0",()=>console.log(`SOS server running on http://0.0.0.0:${PORT}`));
+const PORT=process.env.PORT||3001;
+httpServer.listen(PORT,"0.0.0.0",()=>console.log(`SOS server running on http://0.0.0.0:${PORT}`));
