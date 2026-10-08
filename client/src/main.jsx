@@ -133,10 +133,13 @@ function App(){
       <section className="play">
         <div className="board" style={{gridTemplateColumns:"repeat("+n+",1fr)"}}>
           {board.map((row,r)=>row.map((v,c)=><button key={r+"-"+c} className={"cell "+(v||"")+" p"+(owners[r][c]!==null?owners[r][c]+1:"")+(flash.includes(r+","+c)?" hit":"")} disabled={!!v||winner!==null} onClick={()=>move(r,c)}>{v}</button>))}
-          {lines.map(({cells,player,delay},i)=>{
-            const[a,_,z]=cells,midX=((a[1]+z[1])/2+.5)*100/n,midY=((a[0]+z[0])/2+.5)*100/n,dx=(z[1]-a[1])*100/n,dy=(z[0]-a[0])*100/n,len=Math.hypot(dx,dy),angle=Math.atan2(dy,dx)*180/Math.PI;
-            return <span key={i} className={"sosLine p"+(player+1)} style={{left:midX+"%",top:midY+"%",width:len+"%",transform:"translate(-50%,-50%) rotate("+angle+"deg)", "--delay":(delay||0)+"ms"}}><i/></span>;
-          })}
+          {lines.length>0&&<svg className="sosOverlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            {lines.map(({cells,player,delay},i)=>{
+              const[a,_,z]=cells;
+              const x1=(a[1]+.5)*100/n,y1=(a[0]+.5)*100/n,x2=(z[1]+.5)*100/n,y2=(z[0]+.5)*100/n;
+              return <line key={i} className={"sosLine p"+(player+1)} x1={x1} y1={y1} x2={x2} y2={y2} pathLength="1" style={{"--delay":(delay||0)+"ms"}}/>;
+            })}
+          </svg>}
         </div>
 
         {winner===null&&<div className="picker">
