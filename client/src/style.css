@@ -86,7 +86,7 @@ button{border:0}
 .cell.p1{color:var(--p1);background:#201916}
 .cell.p2{color:var(--p2);background:#1d2119}
 .cell.hit{animation:cellMatch .9s cubic-bezier(.2,.8,.2,1) both}
-.sosLine{position:absolute;height:4px;transform-origin:left center;pointer-events:none;border-radius:999px;opacity:1}
+.sosLine{position:absolute;height:4px;transform-origin:center center;pointer-events:none;border-radius:999px;opacity:1}
 .sosLine.p1{background:var(--p1);box-shadow:0 0 0 0 var(--p1);animation:linePulse 1.25s ease calc(var(--delay) + .72s) both}
 .sosLine.p2{background:var(--p2);box-shadow:0 0 0 0 var(--p2);animation:linePulse 1.25s ease calc(var(--delay) + .72s) both}
 .sosLine i{position:absolute;left:0;top:0;width:0;height:100%;border-radius:inherit;background:inherit;overflow:hidden;animation:lineSweep .85s cubic-bezier(.16,1,.3,1) var(--delay) both}
