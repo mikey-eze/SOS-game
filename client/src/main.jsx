@@ -134,8 +134,8 @@ function App(){
         <div className="board" style={{gridTemplateColumns:"repeat("+n+",1fr)"}}>
           {board.map((row,r)=>row.map((v,c)=><button key={r+"-"+c} className={"cell "+(v||"")+" p"+(owners[r][c]!==null?owners[r][c]+1:"")+(flash.includes(r+","+c)?" hit":"")} disabled={!!v||winner!==null} onClick={()=>move(r,c)}>{v}</button>))}
           {lines.map(({cells,player,delay},i)=>{
-            const[a,_,z]=cells,left=(a[1]+.5)*100/n,top=(a[0]+.5)*100/n,dx=(z[1]-a[1])*100/n,dy=(z[0]-a[0])*100/n,len=Math.hypot(dx,dy),angle=Math.atan2(dy,dx)*180/Math.PI;
-            return <span key={i} className={"sosLine p"+(player+1)} style={{left:left+"%",top:top+"%",width:len+"%",transform:"rotate("+angle+"deg)", "--delay":(delay||0)+"ms"}}><i/></span>;
+            const[a,_,z]=cells,midX=((a[1]+z[1])/2+.5)*100/n,midY=((a[0]+z[0])/2+.5)*100/n,dx=(z[1]-a[1])*100/n,dy=(z[0]-a[0])*100/n,len=Math.hypot(dx,dy),angle=Math.atan2(dy,dx)*180/Math.PI;
+            return <span key={i} className={"sosLine p"+(player+1)} style={{left:midX+"%",top:midY+"%",width:len+"%",transform:"translate(-50%,-50%) rotate("+angle+"deg)", "--delay":(delay||0)+"ms"}}><i/></span>;
           })}
         </div>
 
