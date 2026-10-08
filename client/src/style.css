@@ -86,8 +86,25 @@ button{border:0}
 .cell.p1{color:var(--p1);background:#201916}
 .cell.p2{color:var(--p2);background:#1d2119}
 .cell.hit{animation:cellMatch .9s cubic-bezier(.2,.8,.2,1) both}
-.sosOverlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
-.sosLine{fill:none;stroke-width:1.15;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:lineDraw .85s cubic-bezier(.16,1,.3,1) var(--delay) forwards,linePulse 1.15s ease calc(var(--delay) + .8s) both}
+.sosOverlay{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  z-index:20;
+  pointer-events:none;
+  overflow:visible;
+}
+.sosLine{
+  fill:none;
+  stroke-width:1.35;
+  stroke-linecap:round;
+  stroke-dasharray:100;
+  stroke-dashoffset:100;
+  animation:lineDraw .75s cubic-bezier(.16,1,.3,1) var(--delay) forwards,
+            linePulse 1.15s ease calc(var(--delay) + .75s) both;
+}
 .sosLine.p1{stroke:var(--p1)}
 .sosLine.p2{stroke:var(--p2)}
 
@@ -109,7 +126,7 @@ button{border:0}
 @keyframes turnFade{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-1px)}}
 @keyframes turnReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes cellMatch{0%{transform:scale(.92);box-shadow:inset 0 0 0 0 var(--game)}35%{transform:scale(1.08);box-shadow:inset 0 0 0 2px var(--game)}100%{transform:scale(1);box-shadow:inset 0 0 0 0 transparent}}
-@keyframes lineDraw{from{stroke-dashoffset:1;opacity:.25}to{stroke-dashoffset:0;opacity:.95}}
+@keyframes lineDraw{from{stroke-dashoffset:100;opacity:.2}to{stroke-dashoffset:0;opacity:.98}}
 @keyframes linePulse{0%,100%{opacity:.92;filter:brightness(1)}35%{opacity:1;filter:brightness(1.25)}65%{opacity:.95;filter:brightness(1)}}
 
 @media(prefers-reduced-motion:reduce){
