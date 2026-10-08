@@ -135,9 +135,21 @@ function App(){
           {board.map((row,r)=>row.map((v,c)=><button key={r+"-"+c} className={"cell "+(v||"")+" p"+(owners[r][c]!==null?owners[r][c]+1:"")+(flash.includes(r+","+c)?" hit":"")} disabled={!!v||winner!==null} onClick={()=>move(r,c)}>{v}</button>))}
           {lines.length>0&&<svg className="sosOverlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             {lines.map(({cells,player,delay},i)=>{
-              const[a,_,z]=cells;
-              const x1=(a[1]+.5)*100/n,y1=(a[0]+.5)*100/n,x2=(z[1]+.5)*100/n,y2=(z[0]+.5)*100/n;
-              return <line key={i} className={"sosLine p"+(player+1)} x1={x1} y1={y1} x2={x2} y2={y2} pathLength="1" style={{"--delay":(delay||0)+"ms"}}/>;
+              const start=cells[0],end=cells[cells.length-1];
+              const x1=(start[1]+0.5)*100/n;
+              const y1=(start[0]+0.5)*100/n;
+              const x2=(end[1]+0.5)*100/n;
+              const y2=(end[0]+0.5)*100/n;
+              return <line
+                key={i}
+                className={"sosLine p"+(player+1)}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                pathLength="100"
+                style={{"--delay":(delay||0)+"ms"}}
+              />;
             })}
           </svg>}
         </div>
