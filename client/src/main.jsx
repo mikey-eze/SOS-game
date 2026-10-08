@@ -136,10 +136,14 @@ function App(){
           {lines.length>0&&<svg className="sosOverlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             {lines.map(({cells,player,delay},i)=>{
               const start=cells[0],end=cells[cells.length-1];
-              const x1=(start[1]+0.5)*100/n;
-              const y1=(start[0]+0.5)*100/n;
-              const x2=(end[1]+0.5)*100/n;
-              const y2=(end[0]+0.5)*100/n;
+              const extend=0.34;
+              const dr=end[0]-start[0],dc=end[1]-start[1];
+              const step=Math.max(Math.abs(dr),Math.abs(dc));
+              const er=dr/step,ec=dc/step;
+              const x1=(start[1]+0.5-ec*extend)*100/n;
+              const y1=(start[0]+0.5-er*extend)*100/n;
+              const x2=(end[1]+0.5+ec*extend)*100/n;
+              const y2=(end[0]+0.5+er*extend)*100/n;
               return <line
                 key={i}
                 className={"sosLine p"+(player+1)}
