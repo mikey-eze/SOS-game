@@ -43,6 +43,8 @@ function App(){
   const[message,setMessage]=useState("");
   const[flash,setFlash]=useState([]);
   const n=sizes[round-1];
+  const boardFull=board.every(row=>row.every(Boolean));
+  const roundOver=winner!==null||boardFull;
 
   const start=()=>{
     const x=names.map((v,i)=>v.trim()||"PLAYER "+(i+1));
@@ -115,24 +117,24 @@ function App(){
 
     <section className="scoreboard">
       <div className="roundInfo"><span>ROUND {round} / {TOTAL_ROUNDS}</span><b>{n}×{n}</b><small>BOARD</small></div>
-      <div className={"scorePlayer p1 "+(turn===0&&winner===null?"active":"")}>
+      <div className={"scorePlayer p1 "+(turn===0&&!roundOver?"active":"")}>
         <small>PLAYER 1</small><strong>{scores[0]}</strong><b>{names[0]}</b><em>{rs[0]} THIS ROUND</em>
       </div>
       <div className="vs">VS</div>
-      <div className={"scorePlayer p2 "+(turn===1&&winner===null?"active":"")}>
+      <div className={"scorePlayer p2 "+(turn===1&&!roundOver?"active":"")}>
         <small>PLAYER 2</small><strong>{scores[1]}</strong><b>{names[1]}</b><em>{rs[1]} THIS ROUND</em>
       </div>
     </section>
 
-    <div className={"turnBanner "+(winner!==null?"done":"p"+(turn+1))}>
-      {winner!==null?(winner==="DRAW"?"ROUND DRAW":names[winner]+" WINS ROUND"):(message||"NOW PLAYING · "+names[turn])}
+    <div className={"turnBanner "+(roundOver?"done":"p"+(turn+1))}>
+      {roundOver?(winner==="DRAW"?"ROUND DRAW":winner!==null?names[winner]+" WINS ROUND":"ROUND COMPLETE"):(message||"NOW PLAYING · "+names[turn])}
     </div>
 
     <div className="gameWrap">
       <aside><div className="rules"><b>HOW TO PLAY</b><br/>Make SOS horizontally, vertically or diagonally.<br/>SOS = +1 point and you play again.<br/>No SOS = turn switches.</div></aside>
       <section className="play">
         <div className="board" style={{gridTemplateColumns:"repeat("+n+",1fr)"}}>
-          {board.map((row,r)=>row.map((v,c)=><button key={r+"-"+c} className={"cell "+(v||"")+" p"+(owners[r][c]!==null?owners[r][c]+1:"")+(flash.includes(r+","+c)?" hit":"")} disabled={!!v||winner!==null} onClick={()=>move(r,c)}>{v}</button>))}
+          {board.map((row,r)=>row.map((v,c)=><button key={r+"-"+c} className={"cell "+(v||"")+" p"+(owners[r][c]!==null?owners[r][c]+1:"")+(flash.includes(r+","+c)?" hit":"")} disabled={!!v||roundOver} onClick={()=>move(r,c)}>{v}</button>))}
           {lines.length>0&&<svg className="sosOverlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             {lines.map(({cells,player,delay},i)=>{
               const start=cells[0],end=cells[cells.length-1];
@@ -141,9 +143,11 @@ function App(){
               const step=Math.max(Math.abs(dr),Math.abs(dc));
               const er=dr/step,ec=dc/step;
               const x1=(start[1]+0.5-ec*extend)*100/n;
-              const y1=(start[0]+0.5-er*extend)*100/n;
               const x2=(end[1]+0.5+ec*extend)*100/n;
-              const y2=(end[0]+0.5+er*extend)*100/n;
+              const horizontal=dr===0;
+              const yOffset=horizontal?0.08:0;
+              const y1=(start[0]+0.5-er*extend+yOffset)*100/n;
+              const y2=(end[0]+0.5+er*extend+yOffset)*100/n;
               return <line
                 key={i}
                 className={"sosLine p"+(player+1)}
@@ -158,13 +162,13 @@ function App(){
           </svg>}
         </div>
 
-        {winner===null&&<div className="picker">
+        {!roundOver&&<div className="picker">
           <button className={letter==="S"?"selected":""} onClick={()=>setLetter("S")}>S</button>
           <button className={letter==="O"?"selected":""} onClick={()=>setLetter("O")}>O</button>
         </div>}
 
-        {winner!==null&&round<TOTAL_ROUNDS&&<button className="nextRound" onClick={next}>START ROUND {round+1} · {sizes[round]}×{sizes[round]}</button>}
-        {winner!==null&&round===TOTAL_ROUNDS&&<button className="nextRound" onClick={()=>setScreen("result")}>VIEW FINAL RESULT</button>}
+        {roundOver&&round<TOTAL_ROUNDS&&<button className="nextRound" onClick={next}>START ROUND {round+1} · {sizes[round]}×{sizes[round]}</button>}
+        {roundOver&&round===TOTAL_ROUNDS&&<button className="nextRound" onClick={()=>setScreen("result")}>VIEW FINAL RESULT</button>}
       </section>
     </div>
   </main>;
