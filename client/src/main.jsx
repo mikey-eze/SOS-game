@@ -135,17 +135,17 @@ function App(){
       <section className="play">
         <div className="board" style={{gridTemplateColumns:"repeat("+n+",1fr)"}}>
           {board.map((row,r)=>row.map((v,c)=><button key={r+"-"+c} className={"cell "+(v||"")+" p"+(owners[r][c]!==null?owners[r][c]+1:"")+(flash.includes(r+","+c)?" hit":"")} disabled={!!v||roundOver} onClick={()=>move(r,c)}>{v}</button>))}
-          {lines.length>0&&<svg className="sosOverlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          {lines.length>0&&<svg className="sosOverlay" viewBox={"0 0 "+n+" "+n} preserveAspectRatio="none" aria-hidden="true">
             {lines.map(({cells,player,delay},i)=>{
               const start=cells[0],end=cells[cells.length-1];
-              const extend=0.34;
               const dr=end[0]-start[0],dc=end[1]-start[1];
               const step=Math.max(Math.abs(dr),Math.abs(dc));
               const er=dr/step,ec=dc/step;
-              const x1=(start[1]+0.5-ec*extend)*100/n;
-              const x2=(end[1]+0.5+ec*extend)*100/n;
-              const y1=(start[0]+0.5-er*extend)*100/n;
-              const y2=(end[0]+0.5+er*extend)*100/n;
+              const extend=0.22;
+              const x1=start[1]+0.5-ec*extend;
+              const y1=start[0]+0.5-er*extend;
+              const x2=end[1]+0.5+ec*extend;
+              const y2=end[0]+0.5+er*extend;
               return <line
                 key={i}
                 className={"sosLine p"+(player+1)}
@@ -153,7 +153,8 @@ function App(){
                 y1={y1}
                 x2={x2}
                 y2={y2}
-                pathLength="100"
+                pathLength="1"
+                vectorEffect="non-scaling-stroke"
                 style={{"--delay":(delay||0)+"ms"}}
               />;
             })}
