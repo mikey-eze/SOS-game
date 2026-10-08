@@ -4,6 +4,7 @@ import "./style.css";
 
 const TOTAL_ROUNDS=7;
 const sizes=[4,6,8,10,12,14,16];
+const roundThemes=["sand","clay","sage","blue","plum","amber","rose"];
 const directions=[[0,1],[1,0],[1,1],[1,-1]];
 const emptyBoard=n=>Array.from({length:n},()=>Array(n).fill(null));
 const inside=(n,r,c)=>r>=0&&r<n&&c>=0&&c<n;
@@ -40,20 +41,21 @@ function App(){
   const[winner,setWinner]=useState(null);
   const[gameWinner,setGameWinner]=useState(null);
   const[message,setMessage]=useState("");
+  const[flash,setFlash]=useState([]);
   const n=sizes[round-1];
 
   const start=()=>{
     const x=names.map((v,i)=>v.trim()||"PLAYER "+(i+1));
     setNames(x);setRound(1);setBoard(emptyBoard(4));setOwners(emptyBoard(4));
     setScores([0,0]);setRs([0,0]);setTurn(0);setLetter("S");setLines([]);
-    setUsed(new Set());setWinner(null);setGameWinner(null);setMessage("");setScreen("game");
+    setUsed(new Set());setWinner(null);setGameWinner(null);setMessage("");setFlash([]);setScreen("game");
   };
 
   const next=()=>{
     const r=round+1;
     setRound(r);setBoard(emptyBoard(sizes[r-1]));setOwners(emptyBoard(sizes[r-1]));
     setRs([0,0]);setTurn(0);setLetter("S");setLines([]);setUsed(new Set());
-    setWinner(null);setMessage("");
+    setWinner(null);setMessage("");setFlash([]);
   };
 
   const move=(r,c)=>{
@@ -65,7 +67,10 @@ function App(){
     const gain=fresh.length,a=[...rs],s=[...scores];
     a[turn]+=gain;s[turn]+=gain;
     setBoard(b);setOwners(o);setUsed(u);
-    setLines([...lines,...fresh.map(cells=>({cells,player:turn}))]);
+    const hitCells=[...new Set(fresh.flat().map(([rr,cc])=>rr+","+cc))];
+    setFlash(hitCells);
+    window.setTimeout(()=>setFlash([]),900);
+    setLines([...lines,...fresh.map((cells,j)=>({cells,player:turn,delay:j*140}))]);
     setRs(a);setScores(s);
     if(b.every(row=>row.every(Boolean))){
       const rw=a[0]===a[1]?"DRAW":a[0]>a[1]?0:1;
@@ -102,7 +107,7 @@ function App(){
     </div>
   </main>;
 
-  return <main className="screen game">
+  return <main className={"screen game theme-"+roundThemes[round-1]} style={{"--roundAccent":roundThemes[round-1]}}>
     <div className="gameBar">
       <div className="brand mini">SOS<span>16</span><small>LOCAL TWO-PLAYER</small></div>
       <button className="ghost miniBtn" onClick={()=>setScreen("home")}>EXIT</button>
@@ -127,10 +132,10 @@ function App(){
       <aside><div className="rules"><b>HOW TO PLAY</b><br/>Make SOS horizontally, vertically or diagonally.<br/>SOS = +1 point and you play again.<br/>No SOS = turn switches.</div></aside>
       <section className="play">
         <div className="board" style={{gridTemplateColumns:"repeat("+n+",1fr)"}}>
-          {board.map((row,r)=>row.map((v,c)=><button key={r+"-"+c} className={"cell "+(v||"")+" p"+(owners[r][c]!==null?owners[r][c]+1:"")} disabled={!!v||winner!==null} onClick={()=>move(r,c)}>{v}</button>))}
-          {lines.map(({cells,player},i)=>{
+          {board.map((row,r)=>row.map((v,c)=><button key={r+"-"+c} className={"cell "+(v||"")+" p"+(owners[r][c]!==null?owners[r][c]+1:"")+(flash.includes(r+","+c)?" hit":"")} disabled={!!v||winner!==null} onClick={()=>move(r,c)}>{v}</button>))}
+          {lines.map(({cells,player,delay},i)=>{
             const[a,_,z]=cells,left=(a[1]+.5)*100/n,top=(a[0]+.5)*100/n,dx=(z[1]-a[1])*100/n,dy=(z[0]-a[0])*100/n,len=Math.hypot(dx,dy),angle=Math.atan2(dy,dx)*180/Math.PI;
-            return <span key={i} className={"sosLine p"+(player+1)} style={{left:left+"%",top:top+"%",width:len+"%",transform:"rotate("+angle+"deg)"}}/>;
+            return <span key={i} className={"sosLine p"+(player+1)} style={{left:left+"%",top:top+"%",width:len+"%", "--angle":angle+"deg","--delay":(delay||0)+"ms"}}><i/></span>;
           })}
         </div>
 
