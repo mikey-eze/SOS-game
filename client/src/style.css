@@ -12,6 +12,11 @@
   --p2:#9da77d;
   --p2-soft:#22271d;
   --cream:#d8d2c4;
+  --game:#b6a98d;
+  --game-soft:#26241f;
+  --game-grid:#30302b;
+  --game-cell:#191a17;
+  --game-line:#c8baa0;
 }
 
 *{box-sizing:border-box}
@@ -59,6 +64,14 @@ button{border:0}
 .turnBanner{width:min(760px,calc(100% - 20px));min-height:43px;margin:0 auto 12px;padding:11px 14px;border-radius:9px;text-align:center;font:500 10px "DM Mono",monospace;letter-spacing:1px;text-transform:uppercase;opacity:1;animation:turnReveal 1.25s ease both}
 .turnBanner.p1{background:var(--p1-soft);color:#d8aa9d}
 .turnBanner.p2{background:var(--p2-soft);color:#c3caab}
+
+.game.theme-sand{--game:#b6a98d;--game-soft:#28251f;--game-grid:#36342e;--game-cell:#191916;--game-line:#d1c09d}
+.game.theme-clay{--game:#b27b68;--game-soft:#2a211e;--game-grid:#3a2d29;--game-cell:#1a1716;--game-line:#c99583}
+.game.theme-sage{--game:#93a27c;--game-soft:#22271e;--game-grid:#30362a;--game-cell:#181b17;--game-line:#aebe91}
+.game.theme-blue{--game:#7894a8;--game-soft:#20262a;--game-grid:#2d3940;--game-cell:#171b1e;--game-line:#94afc2}
+.game.theme-plum{--game:#9b809a;--game-soft:#29222a;--game-grid:#3a303b;--game-cell:#1b181c;--game-line:#b89ab6}
+.game.theme-amber{--game:#b29a68;--game-soft:#29251c;--game-grid:#393328;--game-cell:#1b1915;--game-line:#c9b27b}
+.game.theme-rose{--game:#a87882;--game-soft:#292124;--game-grid:#392c30;--game-cell:#1b1719;--game-line:#c18e98}
 .turnBanner.done{background:var(--surface);color:var(--muted)}
 
 .gameWrap{width:min(920px,calc(100% - 20px));margin:auto;display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:start}
@@ -66,15 +79,18 @@ button{border:0}
 .rules{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:13px;color:var(--muted);font:10px/1.65 "DM Mono",monospace}
 .rules b{display:block;color:var(--text);font-size:9px;letter-spacing:1px;margin-bottom:4px}
 .play{min-width:0}
-.board{position:relative;width:min(100%,680px);margin:0 auto;display:grid;aspect-ratio:1;border:1px solid var(--line);background:#151613;border-radius:10px;overflow:hidden}
-.cell{min-width:0;min-height:0;padding:0;border-right:1px solid #292a25;border-bottom:1px solid #292a25;background:#171815;color:transparent;font-size:clamp(11px,3.5vw,28px);font-weight:600;transition:background .35s ease,transform .2s ease}
+.board{position:relative;width:min(100%,680px);margin:0 auto;display:grid;aspect-ratio:1;border:1px solid var(--game);background:var(--game-cell);border-radius:10px;overflow:hidden;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--game) 18%,transparent)}
+.cell{min-width:0;min-height:0;padding:0;border-right:1px solid var(--game-grid);border-bottom:1px solid var(--game-grid);background:var(--game-cell);color:transparent;font-size:clamp(11px,3.5vw,28px);font-weight:600;transition:background .35s ease,transform .2s ease,box-shadow .35s ease}
 .cell:active:not(:disabled){transform:scale(.94)}
 .cell:disabled{cursor:default}
 .cell.p1{color:var(--p1);background:#201916}
 .cell.p2{color:var(--p2);background:#1d2119}
-.sosLine{position:absolute;height:2px;transform-origin:left center;pointer-events:none;border-radius:2px;opacity:.75;animation:lineDraw 1.4s ease both}
-.sosLine.p1{background:var(--p1)}
-.sosLine.p2{background:var(--p2)}
+.cell.hit{animation:cellMatch .9s cubic-bezier(.2,.8,.2,1) both}
+.sosLine{position:absolute;height:3px;transform-origin:left center;pointer-events:none;border-radius:999px;opacity:0;transform:rotate(var(--angle)) scaleX(0);animation:lineGrow .7s cubic-bezier(.16,1,.3,1) var(--delay) both,linePulse 1.35s ease calc(var(--delay) + .62s) both;box-shadow:0 0 0 0 color-mix(in srgb,var(--game-line) 0%,transparent)}
+.sosLine.p1{background:var(--p1);box-shadow:0 0 0 0 var(--p1)}
+.sosLine.p2{background:var(--p2);box-shadow:0 0 0 0 var(--p2)}
+.sosLine i{position:absolute;inset:0;border-radius:inherit;overflow:hidden}
+.sosLine i:after{content:"";position:absolute;top:-4px;bottom:-4px;left:-30%;width:24%;background:rgba(255,255,255,.72);filter:blur(1px);transform:skewX(-18deg);animation:lineShine .85s ease calc(var(--delay) + .28s) both}
 
 .picker{display:flex;justify-content:center;gap:8px;margin:10px auto 0}
 .picker button{width:48px;height:42px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--muted);font-weight:600}
@@ -92,8 +108,15 @@ button{border:0}
 
 @keyframes turnFade{0%,100%{opacity:.72;transform:translateY(0)}50%{opacity:1;transform:translateY(-1px)}}
 @keyframes turnReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
-@keyframes lineDraw{from{opacity:0}to{opacity:.75}}
+@keyframes cellMatch{0%{transform:scale(.92);box-shadow:inset 0 0 0 0 var(--game)}35%{transform:scale(1.08);box-shadow:inset 0 0 0 2px var(--game)}100%{transform:scale(1);box-shadow:inset 0 0 0 0 transparent}}
+@keyframes lineGrow{0%{opacity:0;transform:rotate(var(--angle)) scaleX(0)}70%{opacity:1;transform:rotate(var(--angle)) scaleX(1.04)}100%{opacity:.9;transform:rotate(var(--angle)) scaleX(1)}}
+@keyframes lineShine{0%{left:-30%}100%{left:120%}}
+@keyframes linePulse{0%,100%{opacity:.9;box-shadow:0 0 0 0 transparent}45%{opacity:1;box-shadow:0 0 0 4px color-mix(in srgb,var(--game-line) 16%,transparent)}70%{opacity:.9;box-shadow:0 0 0 0 transparent}}
 
+@media(prefers-reduced-motion:reduce){
+  .scorePlayer.p1.active,.scorePlayer.p2.active,.turnBanner,.sosLine,.sosLine i:after,.cell.hit{animation:none!important}
+  .sosLine{opacity:.9;transform:rotate(var(--angle)) scaleX(1)}
+}
 @media(max-width:700px){
   .brand{padding:16px 16px 0}
   .hero{width:calc(100% - 28px);margin:10vh auto 0}
